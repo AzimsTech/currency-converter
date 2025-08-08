@@ -116,7 +116,7 @@ class CurrencyConverter {
         }
         
         const result = this.calculateConversion(amount, fromCurrency, toCurrency);
-        this.toAmountInput.value = result.toFixed(4);
+        this.toAmountInput.value = result.toFixed(2);
         this.displayResult(amount, fromCurrency, toCurrency, result);
     }
     
@@ -132,7 +132,7 @@ class CurrencyConverter {
         }
         
         const result = this.calculateConversion(amount, fromCurrency, toCurrency);
-        this.fromAmountInput.value = result.toFixed(4);
+        this.fromAmountInput.value = result.toFixed(2);
         this.displayResult(parseFloat(this.fromAmountInput.value), this.fromCurrencySelect.value, this.toCurrencySelect.value, parseFloat(this.toAmountInput.value));
     }
     
@@ -170,7 +170,7 @@ class CurrencyConverter {
     }
     
     displayResult(fromAmount, fromCurrency, toCurrency, toAmount) {
-        this.resultText.textContent = `${fromAmount} ${fromCurrency} = ${toAmount.toFixed(4)} ${toCurrency}`;
+        this.resultText.textContent = `${fromAmount} ${fromCurrency} = ${toAmount.toFixed(2)} ${toCurrency}`;
         
         const rate = this.calculateConversion(1, fromCurrency, toCurrency);
         this.rateInfo.textContent = `1 ${fromCurrency} = ${rate.toFixed(6)} ${toCurrency}`;
