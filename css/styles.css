@@ -264,38 +264,38 @@ body {
     }
 
     /* Style the number input spinners */
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button {
-        background-color: #444;
-        border-left: 1px solid #555;
+    input[type="number"]::-webkit-inner-spin-button {
+        /* Invert the default black arrows to white */
+        filter: invert(1);
     }
-        /* Style the dropdown scrollbar */
-        .currency-select::-webkit-scrollbar {
-            width: 8px;
-        }
-    
-        .currency-select::-webkit-scrollbar-track {
-            background: #333;
-        }
-    
-        .currency-select::-webkit-scrollbar-thumb {
-            background: #555;
-            border-radius: 4px;
-        }
-    
-        .currency-select::-webkit-scrollbar-thumb:hover {
-            background: #666;
-        }
-    
-        /* For Firefox */
-        .currency-select {
-            scrollbar-width: thin;
-            scrollbar-color: #555 #333;
-        }
-    
-        /* Style the options scrollbar (for when there are many options) */
-        select option {
-            scrollbar-width: thin;
-            scrollbar-color: #555 #333;
-        }
+
+    /* Style the dropdown scrollbar */
+    .currency-select::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .currency-select::-webkit-scrollbar-track {
+        background: #333;
+    }
+
+    .currency-select::-webkit-scrollbar-thumb {
+        background: #555;
+        border-radius: 4px;
+    }
+
+    .currency-select::-webkit-scrollbar-thumb:hover {
+        background: #666;
+    }
+
+    /* For Firefox */
+    .currency-select {
+        scrollbar-width: thin;
+        scrollbar-color: #555 #333;
+    }
+
+    /* Style the options scrollbar (for when there are many options) */
+    select option {
+        scrollbar-width: thin;
+        scrollbar-color: #555 #333;
+    }
 }
