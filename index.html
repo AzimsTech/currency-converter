@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Converter</title>
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22black%22>💱</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Currency Converter</h1>
+            <p class="subtitle">Check live foreign currency exchange rates</p>
+        </div>
+        
+        <div class="converter-section">
+            <div class="currency-row">
+                <div class="currency-input-group">
+                    <input type="number" class="currency-input" id="fromAmount" placeholder="1" value="1">
+                    <select class="currency-select" id="fromCurrency">
+                        <option value="USD">USD</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-bottom: 16px;">
+                <button class="swap-button" id="swapButton" aria-label="Swap">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 1L6 7H10V10H14V7H18L12 1ZM10 10H14V14H10V10ZM12 23L6 17H10V14H14V17H18L12 23Z" />
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="currency-row">
+                <div class="currency-input-group">
+                    <input type="number" class="currency-input" id="toAmount" placeholder="0">
+                    <select class="currency-select" id="toCurrency">
+                        <option value="MYR">MYR</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="result-section" id="resultSection" style="display: none;">
+                <div class="result-text" id="resultText"></div>
+                <div class="rate-info" id="rateInfo"></div>
+            </div>
+            
+            <div class="error" id="errorMessage" style="display: none;"></div>
+            
+            <div class="last-updated" id="lastUpdated"></div>
+        </div>
+    </div>
+    <script src="js/script.js"></script>
+</body>
+</html>
