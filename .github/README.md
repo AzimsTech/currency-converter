@@ -15,3 +15,6 @@ The app uses the conversion rate provided by Bank Negara Malaysia (BNM). The rel
 
 [bnm-docs]:https://apikijangportal.bnm.gov.my/
 [corsproxy]:https://corsproxy.io/
+
+> [!NOTE]
+>  Exchange rates are not updated on BNM's non-working days (e.g., weekends and public holidays). During these times, the last available rate will be used.
