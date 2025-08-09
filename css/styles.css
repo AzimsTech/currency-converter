@@ -299,3 +299,59 @@ body {
         scrollbar-color: #555 #333;
     }
 }
+
+/* Extra small devices (phones below 480px width) */
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        border-radius: 8px;
+    }
+
+    .header,
+    .converter-section {
+        padding: 16px;
+    }
+
+    .title {
+        font-size: 22px;
+    }
+
+    .subtitle {
+        font-size: 12px;
+    }
+
+    .currency-input {
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    .currency-select {
+        padding: 12px 8px;
+        font-size: 12px;
+        min-width: 70px;
+    }
+
+    .swap-button {
+        min-width: 40px;
+        min-height: 40px;
+        padding: 8px;
+    }
+
+    .result-text {
+        font-size: 16px;
+    }
+}
+
+/* Short screens (less than 700px height) */
+@media (max-height: 700px) {
+    body {
+        align-items: flex-start;
+    }
+
+    .container {
+        margin-top: 10px;
+    }
+}
