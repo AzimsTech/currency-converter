@@ -220,7 +220,7 @@ class CurrencyConverter {
         this.resultText.textContent = `${fromAmount} ${fromCurrency} = ${toAmount.toFixed(2)} ${toCurrency}`;
 
         const rate = this.calculateConversion(1, fromCurrency, toCurrency);
-        this.rateInfo.textContent = `1 ${fromCurrency} = ${rate.toFixed(6)} ${toCurrency}`;
+        this.rateInfo.textContent = `1 ${fromCurrency} = ${rate.toFixed(4)} ${toCurrency}`;
 
         this.showResult();
     }
