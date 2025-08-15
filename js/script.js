@@ -33,6 +33,7 @@ class CurrencyConverter {
             'MMK': '🇲🇲', // Myanmar Kyat
             'KHR': '🇰🇭', // Cambodian Riel
             'BND': '🇧🇳', // Brunei Dollar
+            'SDR': '🏳️', // Special Drawing Rights (IMF)
         };
 
         this.fromAmountInput = document.getElementById('fromAmount');
@@ -213,10 +214,10 @@ class CurrencyConverter {
     }
 
     displayResult(fromAmount, fromCurrency, toCurrency, toAmount) {
-        const fromFlag = this.currencyFlags[fromCurrency] || '🏳️';
-        const toFlag = this.currencyFlags[toCurrency] || '🏳️';
+        // const fromFlag = this.currencyFlags[fromCurrency] || '🏳️';
+        // const toFlag = this.currencyFlags[toCurrency] || '🏳️';
 
-        this.resultText.textContent = `${fromAmount} ${fromCurrency} ${fromFlag} = ${toAmount.toFixed(2)} ${toCurrency} ${toFlag}`;
+        this.resultText.textContent = `${fromAmount} ${fromCurrency} = ${toAmount.toFixed(2)} ${toCurrency}`;
 
         const rate = this.calculateConversion(1, fromCurrency, toCurrency);
         this.rateInfo.textContent = `1 ${fromCurrency} = ${rate.toFixed(6)} ${toCurrency}`;
