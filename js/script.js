@@ -3,7 +3,38 @@ class CurrencyConverter {
         this.exchangeRates = {};
         this.lastUpdated = '';
         this.isLoading = false;
-        
+
+        // Currency to flag emoji mapping (based on BNM API currencies)
+        this.currencyFlags = {
+            'MYR': '🇲🇾', // Malaysian Ringgit
+            'USD': '🇺🇸', // United States Dollar
+            'EUR': '🇪🇺', // Euro
+            'GBP': '🇬🇧', // British Pound Sterling
+            'JPY': '🇯🇵', // Japanese Yen
+            'AUD': '🇦🇺', // Australian Dollar
+            'CAD': '🇨🇦', // Canadian Dollar
+            'CHF': '🇨🇭', // Swiss Franc
+            'CNY': '🇨🇳', // Chinese Yuan
+            'NZD': '🇳🇿', // New Zealand Dollar
+            'SGD': '🇸🇬', // Singapore Dollar
+            'HKD': '🇭🇰', // Hong Kong Dollar
+            'KRW': '🇰🇷', // South Korean Won
+            'INR': '🇮🇳', // Indian Rupee
+            'THB': '🇹🇭', // Thai Baht
+            'IDR': '🇮🇩', // Indonesian Rupiah
+            'PHP': '🇵🇭', // Philippine Peso
+            'VND': '🇻🇳', // Vietnamese Dong
+            'TWD': '🇹🇼', // Taiwan Dollar
+            'AED': '🇦🇪', // UAE Dirham
+            'SAR': '🇸🇦', // Saudi Riyal
+            'EGP': '🇪🇬', // Egyptian Pound
+            'PKR': '🇵🇰', // Pakistani Rupee
+            'NPR': '🇳🇵', // Nepalese Rupee
+            'MMK': '🇲🇲', // Myanmar Kyat
+            'KHR': '🇰🇭', // Cambodian Riel
+            'BND': '🇧🇳', // Brunei Dollar
+        };
+
         this.fromAmountInput = document.getElementById('fromAmount');
         this.toAmountInput = document.getElementById('toAmount');
         this.fromCurrencySelect = document.getElementById('fromCurrency');
@@ -14,16 +45,16 @@ class CurrencyConverter {
         this.rateInfo = document.getElementById('rateInfo');
         this.errorMessage = document.getElementById('errorMessage');
         this.lastUpdatedDiv = document.getElementById('lastUpdated');
-        
+
         this.init();
     }
-    
+
     async init() {
         await this.fetchExchangeRates();
         this.setupEventListeners();
         this.convert();
     }
-    
+
     async fetchExchangeRates() {
         try {
             this.setLoading(true);
@@ -61,6 +92,11 @@ class CurrencyConverter {
                 };
             });
 
+            // If you want a more formatted list
+            data.data.forEach(currency => {
+                console.log(`${currency.currency_code} (Unit: ${currency.unit})`);
+            });
+
             this.lastUpdated = data.meta.last_updated;
             this.updateLastUpdatedDisplay();
             this.populateCurrencyDropdowns();
@@ -73,69 +109,76 @@ class CurrencyConverter {
         }
     }
 
-    
+    // Helper method to get formatted currency display text
+    getCurrencyDisplayText(currencyCode) {
+        const flag = this.currencyFlags[currencyCode] || '🏳️';
+        return `${flag} ${currencyCode}`;
+    }
+
     populateCurrencyDropdowns() {
         const currencies = Object.keys(this.exchangeRates).sort();
-        
-        // Clear existing options except MYR for fromCurrency
+
+        // Clear existing options
         this.fromCurrencySelect.innerHTML = '';
         this.toCurrencySelect.innerHTML = '';
-        
+
         currencies.forEach(currency => {
-            const option1 = new Option(currency, currency);
-            const option2 = new Option(currency, currency);
-            
+            const displayText = this.getCurrencyDisplayText(currency);
+
+            const option1 = new Option(displayText, currency);
+            const option2 = new Option(displayText, currency);
+
             this.fromCurrencySelect.appendChild(option1);
             this.toCurrencySelect.appendChild(option2);
         });
-        
+
         // Set default values
         this.fromCurrencySelect.value = 'USD';
         this.toCurrencySelect.value = 'MYR';
     }
-    
+
     setupEventListeners() {
         this.fromAmountInput.addEventListener('input', () => this.convert());
         this.fromCurrencySelect.addEventListener('change', () => this.convert());
         this.toCurrencySelect.addEventListener('change', () => this.convert());
         this.swapButton.addEventListener('click', () => this.swapCurrencies());
-        
+
         // Allow editing the "to" amount
         this.toAmountInput.addEventListener('input', () => this.reverseConvert());
     }
-    
+
     convert() {
         const amount = parseFloat(this.fromAmountInput.value) || 0;
         const fromCurrency = this.fromCurrencySelect.value;
         const toCurrency = this.toCurrencySelect.value;
-        
+
         if (amount === 0) {
             this.toAmountInput.value = '';
             this.hideResult();
             return;
         }
-        
+
         const result = this.calculateConversion(amount, fromCurrency, toCurrency);
         this.toAmountInput.value = result.toFixed(2);
         this.displayResult(amount, fromCurrency, toCurrency, result);
     }
-    
+
     reverseConvert() {
         const amount = parseFloat(this.toAmountInput.value) || 0;
         const fromCurrency = this.toCurrencySelect.value;
         const toCurrency = this.fromCurrencySelect.value;
-        
+
         if (amount === 0) {
             this.fromAmountInput.value = '';
             this.hideResult();
             return;
         }
-        
+
         const result = this.calculateConversion(amount, fromCurrency, toCurrency);
         this.fromAmountInput.value = result.toFixed(2);
         this.displayResult(parseFloat(this.fromAmountInput.value), this.fromCurrencySelect.value, this.toCurrencySelect.value, parseFloat(this.toAmountInput.value));
     }
-    
+
     calculateConversion(amount, fromCurrency, toCurrency) {
         if (fromCurrency === toCurrency) {
             return amount;
@@ -168,50 +211,53 @@ class CurrencyConverter {
 
         return result;
     }
-    
+
     displayResult(fromAmount, fromCurrency, toCurrency, toAmount) {
-        this.resultText.textContent = `${fromAmount} ${fromCurrency} = ${toAmount.toFixed(2)} ${toCurrency}`;
-        
+        const fromFlag = this.currencyFlags[fromCurrency] || '🏳️';
+        const toFlag = this.currencyFlags[toCurrency] || '🏳️';
+
+        this.resultText.textContent = `${fromAmount} ${fromCurrency} ${fromFlag} = ${toAmount.toFixed(2)} ${toCurrency} ${toFlag}`;
+
         const rate = this.calculateConversion(1, fromCurrency, toCurrency);
         this.rateInfo.textContent = `1 ${fromCurrency} = ${rate.toFixed(6)} ${toCurrency}`;
-        
+
         this.showResult();
     }
-    
+
     swapCurrencies() {
         const tempCurrency = this.fromCurrencySelect.value;
         const tempAmount = this.fromAmountInput.value;
-        
+
         this.fromCurrencySelect.value = this.toCurrencySelect.value;
         this.toCurrencySelect.value = tempCurrency;
-        
+
         this.fromAmountInput.value = this.toAmountInput.value;
-        
+
         this.convert();
     }
-    
+
     showResult() {
         this.resultSection.style.display = 'block';
     }
-    
+
     hideResult() {
         this.resultSection.style.display = 'none';
     }
-    
+
     showError(message) {
         this.errorMessage.textContent = message;
         this.errorMessage.style.display = 'block';
     }
-    
+
     hideError() {
         this.errorMessage.style.display = 'none';
     }
-    
+
     setLoading(loading) {
         this.isLoading = loading;
         document.body.classList.toggle('loading', loading);
     }
-    
+
     updateLastUpdatedDisplay() {
         if (this.lastUpdated) {
             const date = new Date(this.lastUpdated);
