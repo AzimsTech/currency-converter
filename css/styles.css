@@ -5,13 +5,16 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f8f9fa;
     padding: 20px;
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+* {
+    font-family: 'Twemoji Country Flags', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* Move the container to the top because of the phone keyboard */
@@ -331,7 +334,7 @@ body {
     .currency-select {
         padding: 12px 8px;
         font-size: 12px;
-        min-width: 82px;
+        min-width: 86px;
     }
 
     .swap-button {
