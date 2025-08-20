@@ -271,3 +271,23 @@ class CurrencyConverter {
 document.addEventListener('DOMContentLoaded', () => {
     new CurrencyConverter();
 });
+
+
+// Always focus + select fromAmount (on load and after swap)
+window.addEventListener("DOMContentLoaded", () => {
+    const from = document.getElementById("fromAmount");
+    const swap = document.getElementById("swapButton");
+
+    function focusAndSelect(el) {
+        el.focus();
+        setTimeout(() => el.select(), 0);
+    }
+
+    // on load → fromAmount
+    focusAndSelect(from);
+
+    // on swap click → still only fromAmount
+    swap.addEventListener("click", () => {
+        focusAndSelect(from);
+    });
+});
