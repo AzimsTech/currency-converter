@@ -2,6 +2,7 @@
     "name": "Currency Converter",
     "short_name": "Currency Converter",
     "start_url": "/currency-converter",
+    "scope": "/currency-converter",
     "display": "standalone",
     "orientation": "portrait",
     "background_color": "#121212",
@@ -20,16 +21,14 @@
             "purpose": "maskable"
         },
         {
-            "src": "assets/icons/transparent-192x192.png",
+            "src": "assets/icons/chrome-192x192.png",
             "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "any"
+            "type": "image/png"
         },
         {
-            "src": "assets/icons/transparent-512x512.png",
+            "src": "assets/icons/chrome-512x512.png",
             "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "any"
+            "type": "image/png"
         }
     ],
     "splash_pages": null
