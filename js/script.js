@@ -119,32 +119,32 @@ class CurrencyConverter {
     populateCurrencyDropdowns() {
         const currencies = Object.keys(this.exchangeRates).sort();
 
-        // Clear existing options
         this.fromCurrencySelect.innerHTML = '';
         this.toCurrencySelect.innerHTML = '';
 
         currencies.forEach(currency => {
             const displayText = this.getCurrencyDisplayText(currency);
-
-            const option1 = new Option(displayText, currency);
-            const option2 = new Option(displayText, currency);
-
-            this.fromCurrencySelect.appendChild(option1);
-            this.toCurrencySelect.appendChild(option2);
+            this.fromCurrencySelect.appendChild(new Option(displayText, currency));
+            this.toCurrencySelect.appendChild(new Option(displayText, currency));
         });
 
-        // Set default values
-        this.fromCurrencySelect.value = 'USD';
-        this.toCurrencySelect.value = 'MYR';
+        // Restore last selected currencies or set default
+        this.fromCurrencySelect.value = localStorage.getItem('fromCurrency') || 'USD';
+        this.toCurrencySelect.value = localStorage.getItem('toCurrency') || 'MYR';
     }
 
     setupEventListeners() {
         this.fromAmountInput.addEventListener('input', () => this.convert());
-        this.fromCurrencySelect.addEventListener('change', () => this.convert());
-        this.toCurrencySelect.addEventListener('change', () => this.convert());
+        this.fromCurrencySelect.addEventListener('change', () => {
+            this.convert();
+            localStorage.setItem('fromCurrency', this.fromCurrencySelect.value);
+        });
+        this.toCurrencySelect.addEventListener('change', () => {
+            this.convert();
+            localStorage.setItem('toCurrency', this.toCurrencySelect.value);
+        });
         this.swapButton.addEventListener('click', () => this.swapCurrencies());
 
-        // Allow editing the "to" amount
         this.toAmountInput.addEventListener('input', () => this.reverseConvert());
     }
 
