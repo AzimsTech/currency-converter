@@ -227,12 +227,9 @@ class CurrencyConverter {
 
     swapCurrencies() {
         const tempCurrency = this.fromCurrencySelect.value;
-        const tempAmount = this.fromAmountInput.value;
 
         this.fromCurrencySelect.value = this.toCurrencySelect.value;
         this.toCurrencySelect.value = tempCurrency;
-
-        this.fromAmountInput.value = this.toAmountInput.value;
 
         this.convert();
     }
