@@ -61,7 +61,7 @@ class CurrencyConverter {
             this.setLoading(true);
             this.hideError();
 
-            const response = await fetch('https://corsproxy.io/?https://api.bnm.gov.my/public/exchange-rate', {
+            const response = await fetch('https://currency-converter.azimstech.workers.dev', {
                 headers: {
                     'Accept': 'application/vnd.BNM.API.v1+json'
                 }
