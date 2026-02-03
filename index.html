@@ -60,6 +60,9 @@
             navigator.serviceWorker.register("sw.js");
         }
     </script>
-    <script type="module"> import countryFlagEmojiPolyfill from 'https://cdn.jsdelivr.net/npm/country-flag-emoji-polyfill@0.1/+esm' </script>
+    <script type="module" defer>
+      import { polyfillCountryFlagEmojis } from "https://cdn.jsdelivr.net/npm/country-flag-emoji-polyfill@0.1.8/+esm";
+      polyfillCountryFlagEmojis();
+    </script>
 </body>
 </html>
