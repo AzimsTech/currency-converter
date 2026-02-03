@@ -259,9 +259,12 @@ class CurrencyConverter {
     updateLastUpdatedDisplay() {
         if (this.lastUpdated) {
             const date = new Date(this.lastUpdated);
-            this.lastUpdatedDiv.textContent = `BNM Open API - Last updated: ${date.toLocaleString()}`;
+            // fallback to en-MY if navigator.language is exactly 'en'
+            const locale = navigator.language === 'en' ? 'en-MY' : navigator.language;
+            this.lastUpdatedDiv.textContent = `BNM Open API - Last updated: ${date.toLocaleString(locale)}`;
         }
     }
+
 }
 
 // Initialize the converter when the page loads
