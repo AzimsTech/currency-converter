@@ -1,4 +1,4 @@
-# Currency Converter 💱
+# Currency Converter <img src="/assets/icons/chrome-192x192.png" width="128px" align="right" />
 
 Real-time currency converter using Bank Negara Malaysia exchange rates.
 
