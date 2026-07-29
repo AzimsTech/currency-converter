@@ -121,7 +121,7 @@ class CurrencyConverter {
             localStorage.setItem('fromCurrency', this.fromCurrencySelect.value);
         });
         this.swapButton.addEventListener('click', () => this.swapCurrencies());
-        this.addTargetBtn.addEventListener('click', () => this.addTarget());
+        this.addTargetBtn.addEventListener('click', () => { this.addTarget(); this.saveTargetState(); });
     }
 
     restoreTargets() {
@@ -130,6 +130,7 @@ class CurrencyConverter {
             const savedCurrency = localStorage.getItem(`toCurrency_${i}`);
             this.addTarget(savedCurrency || undefined);
         }
+        this.saveTargetState();
     }
 
     addTarget(currencyCode) {
@@ -186,7 +187,6 @@ class CurrencyConverter {
 
         this.updateRemoveButtons();
         this.convertAll();
-        this.saveTargetState();
     }
 
     removeTarget(index) {
