@@ -264,7 +264,7 @@ class CurrencyConverter {
     updateRemoveButtons() {
         const show = this.targets.length > 1;
         this.targets.forEach((t) => {
-            t.removeBtn.style.display = show ? '' : 'none';
+            t.removeBtn.style.display = show ? 'flex' : 'none';
         });
     }
 
