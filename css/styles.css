@@ -17,7 +17,6 @@ body {
     font-family: 'Twemoji Country Flags', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Move the container to the top because of the phone keyboard */
 @media (max-width: 768px) {
     body {
         display: flex;
@@ -56,11 +55,8 @@ body {
     padding: 24px;
 }
 
-.currency-row {
-    display: flex;
-    align-items: center;
+.source-row {
     margin-bottom: 16px;
-    gap: 12px;
 }
 
 .currency-input-group {
@@ -104,6 +100,12 @@ body {
     background: #e8f0fe;
 }
 
+.swap-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
 .swap-button {
     font-size: 1.5rem;
     background: none;
@@ -118,7 +120,6 @@ body {
     justify-content: center;
     min-width: 48px;
     min-height: 48px;
-    margin: 0 auto;
 }
 
 .swap-button:hover {
@@ -126,28 +127,52 @@ body {
     transform: rotate(180deg);
 }
 
-.swap-icon {
-    width: 24px;
-    height: 24px;
+.target-row {
+    margin-bottom: 12px;
 }
 
-.result-section {
-    margin-top: 24px;
-    padding: 20px;
-    background: #e1f5fe;
-    border-radius: 8px;
-}
-
-.result-text {
-    font-size: 18px;
-    color: #202124;
-    font-weight: 400;
-}
-
-.rate-info {
-    margin-top: 8px;
-    font-size: 14px;
+.target-rate {
+    font-size: 12px;
     color: #5f6368;
+    padding: 4px 16px 0;
+    min-height: 18px;
+}
+
+.remove-target-btn {
+    background: none;
+    border: none;
+    border-left: 1px solid #dadce0;
+    cursor: pointer;
+    padding: 16px 14px;
+    color: #5f6368;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+    flex-shrink: 0;
+}
+
+.remove-target-btn:hover {
+    color: #d93025;
+}
+
+.add-target-btn {
+    width: 100%;
+    padding: 14px;
+    border: 2px dashed #dadce0;
+    border-radius: 10px;
+    background: transparent;
+    color: #1a73e8;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 4px;
+}
+
+.add-target-btn:hover {
+    border-color: #1a73e8;
+    background: #f0f6ff;
 }
 
 .loading {
@@ -158,7 +183,7 @@ body {
 .error {
     color: #d93025;
     font-size: 14px;
-    margin-top: 8px;
+    margin-top: 16px;
 }
 
 .last-updated {
@@ -168,7 +193,6 @@ body {
     color: #5f6368;
 }
 
-/* Dark Mode Support */
 @media (prefers-color-scheme: dark) {
     body {
         background-color: #121212;
@@ -236,20 +260,31 @@ body {
     }
 
     .swap-button:hover {
-        background: #444;
+        background: #555;
         color: #ffffff;
     }
 
-    .result-section {
-        background: #0d3446;
-    }
-
-    .result-text {
-        color: #ffffff;
-    }
-
-    .rate-info {
+    .target-rate {
         color: #aaaaaa;
+    }
+
+    .remove-target-btn {
+        border-left: 1px solid #444;
+        color: #aaaaaa;
+    }
+
+    .remove-target-btn:hover {
+        color: #ff6b6b;
+    }
+
+    .add-target-btn {
+        border-color: #444;
+        color: #4285f4;
+    }
+
+    .add-target-btn:hover {
+        border-color: #4285f4;
+        background: #1a3a5c;
     }
 
     .error {
@@ -260,19 +295,15 @@ body {
         color: #777;
     }
 
-    /* Style the dropdown options */
     select option {
         background: #333;
         color: #fff;
     }
 
-    /* Style the number input spinners */
     input[type="number"]::-webkit-inner-spin-button {
-        /* Invert the default black arrows to white */
         filter: invert(1);
     }
 
-    /* Style the dropdown scrollbar */
     .currency-select::-webkit-scrollbar {
         width: 8px;
     }
@@ -290,20 +321,17 @@ body {
         background: #666;
     }
 
-    /* For Firefox */
     .currency-select {
         scrollbar-width: thin;
         scrollbar-color: #555 #333;
     }
 
-    /* Style the options scrollbar (for when there are many options) */
     select option {
         scrollbar-width: thin;
         scrollbar-color: #555 #333;
     }
 }
 
-/* Extra small devices (phones below 480px width) */
 @media (max-width: 480px) {
     body {
         padding: 10px;
@@ -343,12 +371,21 @@ body {
         padding: 8px;
     }
 
-    .result-text {
-        font-size: 16px;
+    .remove-target-btn {
+        padding: 12px 10px;
+    }
+
+    .add-target-btn {
+        padding: 12px;
+        font-size: 13px;
+    }
+
+    .target-rate {
+        font-size: 11px;
+        padding: 2px 12px 0;
     }
 }
 
-/* Short screens (less than 700px height) */
 @media (max-height: 700px) {
     body {
         align-items: flex-start;

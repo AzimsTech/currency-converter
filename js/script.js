@@ -3,47 +3,45 @@ class CurrencyConverter {
         this.exchangeRates = {};
         this.lastUpdated = '';
         this.isLoading = false;
+        this.targets = [];
+        this.focusedTargetIndex = 0;
 
-        // Currency to flag emoji mapping (based on BNM API currencies)
         this.currencyFlags = {
-            'MYR': '🇲🇾', // Malaysian Ringgit
-            'USD': '🇺🇸', // United States Dollar
-            'EUR': '🇪🇺', // Euro
-            'GBP': '🇬🇧', // British Pound Sterling
-            'JPY': '🇯🇵', // Japanese Yen
-            'AUD': '🇦🇺', // Australian Dollar
-            'CAD': '🇨🇦', // Canadian Dollar
-            'CHF': '🇨🇭', // Swiss Franc
-            'CNY': '🇨🇳', // Chinese Yuan
-            'NZD': '🇳🇿', // New Zealand Dollar
-            'SGD': '🇸🇬', // Singapore Dollar
-            'HKD': '🇭🇰', // Hong Kong Dollar
-            'KRW': '🇰🇷', // South Korean Won
-            'INR': '🇮🇳', // Indian Rupee
-            'THB': '🇹🇭', // Thai Baht
-            'IDR': '🇮🇩', // Indonesian Rupiah
-            'PHP': '🇵🇭', // Philippine Peso
-            'VND': '🇻🇳', // Vietnamese Dong
-            'TWD': '🇹🇼', // Taiwan Dollar
-            'AED': '🇦🇪', // UAE Dirham
-            'SAR': '🇸🇦', // Saudi Riyal
-            'EGP': '🇪🇬', // Egyptian Pound
-            'PKR': '🇵🇰', // Pakistani Rupee
-            'NPR': '🇳🇵', // Nepalese Rupee
-            'MMK': '🇲🇲', // Myanmar Kyat
-            'KHR': '🇰🇭', // Cambodian Riel
-            'BND': '🇧🇳', // Brunei Dollar
-            'SDR': '🏳️', // Special Drawing Rights (IMF)
+            'MYR': '🇲🇾',
+            'USD': '🇺🇸',
+            'EUR': '🇪🇺',
+            'GBP': '🇬🇧',
+            'JPY': '🇯🇵',
+            'AUD': '🇦🇺',
+            'CAD': '🇨🇦',
+            'CHF': '🇨🇭',
+            'CNY': '🇨🇳',
+            'NZD': '🇳🇿',
+            'SGD': '🇸🇬',
+            'HKD': '🇭🇰',
+            'KRW': '🇰🇷',
+            'INR': '🇮🇳',
+            'THB': '🇹🇭',
+            'IDR': '🇮🇩',
+            'PHP': '🇵🇭',
+            'VND': '🇻🇳',
+            'TWD': '🇹🇼',
+            'AED': '🇦🇪',
+            'SAR': '🇸🇦',
+            'EGP': '🇪🇬',
+            'PKR': '🇵🇰',
+            'NPR': '🇳🇵',
+            'MMK': '🇲🇲',
+            'KHR': '🇰🇭',
+            'BND': '🇧🇳',
+            'SDR': '🏳️',
         };
 
         this.fromAmountInput = document.getElementById('fromAmount');
-        this.toAmountInput = document.getElementById('toAmount');
         this.fromCurrencySelect = document.getElementById('fromCurrency');
-        this.toCurrencySelect = document.getElementById('toCurrency');
         this.swapButton = document.getElementById('swapButton');
-        this.resultSection = document.getElementById('resultSection');
-        this.resultText = document.getElementById('resultText');
-        this.rateInfo = document.getElementById('rateInfo');
+        this.targetsContainer = document.getElementById('targetsContainer');
+        this.addTargetBtn = document.getElementById('addTargetBtn');
         this.errorMessage = document.getElementById('errorMessage');
         this.lastUpdatedDiv = document.getElementById('lastUpdated');
 
@@ -53,7 +51,8 @@ class CurrencyConverter {
     async init() {
         await this.fetchExchangeRates();
         this.setupEventListeners();
-        this.convert();
+        this.restoreTargets();
+        this.focusAndSelect(this.fromAmountInput);
     }
 
     async fetchExchangeRates() {
@@ -62,9 +61,7 @@ class CurrencyConverter {
             this.hideError();
 
             const response = await fetch('https://currency-converter.azimstech.workers.dev', {
-                headers: {
-                    'Accept': 'application/vnd.BNM.API.v1+json'
-                }
+                headers: { 'Accept': 'application/vnd.BNM.API.v1+json' }
             });
 
             if (!response.ok) {
@@ -73,34 +70,23 @@ class CurrencyConverter {
 
             const data = await response.json();
 
-            // Initialize exchange rates with base MYR
             this.exchangeRates = { 'MYR': { buying_rate: 1, selling_rate: 1, middle_rate: 1 } };
 
             data.data.forEach(currency => {
-                // BNM API does NOT return middle_rate — calculate it
                 const buying = currency.rate.buying_rate;
                 const selling = currency.rate.selling_rate;
                 const middle = (buying + selling) / 2;
-
-                const adjustedBuying = currency.unit === 100 ? buying / 100 : buying;
-                const adjustedSelling = currency.unit === 100 ? selling / 100 : selling;
-                const adjustedMiddle = currency.unit === 100 ? middle / 100 : middle;
-
+                const unit = currency.unit === 100 ? 100 : 1;
                 this.exchangeRates[currency.currency_code] = {
-                    buying_rate: adjustedBuying,
-                    selling_rate: adjustedSelling,
-                    middle_rate: adjustedMiddle
+                    buying_rate: buying / unit,
+                    selling_rate: selling / unit,
+                    middle_rate: middle / unit
                 };
-            });
-
-            // If you want a more formatted list
-            data.data.forEach(currency => {
-                console.log(`${currency.currency_code} (Unit: ${currency.unit})`);
             });
 
             this.lastUpdated = data.meta.last_updated;
             this.updateLastUpdatedDisplay();
-            this.populateCurrencyDropdowns();
+            this.populateFromCurrencyDropdown();
 
         } catch (error) {
             console.error('Error fetching exchange rates:', error);
@@ -110,74 +96,167 @@ class CurrencyConverter {
         }
     }
 
-    // Helper method to get formatted currency display text
+    getSortedCurrencies() {
+        return Object.keys(this.exchangeRates).sort();
+    }
+
     getCurrencyDisplayText(currencyCode) {
         const flag = this.currencyFlags[currencyCode] || '🏳️';
         return `${flag} ${currencyCode}`;
     }
 
-    populateCurrencyDropdowns() {
-        const currencies = Object.keys(this.exchangeRates).sort();
-
+    populateFromCurrencyDropdown() {
+        const currencies = this.getSortedCurrencies();
         this.fromCurrencySelect.innerHTML = '';
-        this.toCurrencySelect.innerHTML = '';
-
         currencies.forEach(currency => {
-            const displayText = this.getCurrencyDisplayText(currency);
-            this.fromCurrencySelect.appendChild(new Option(displayText, currency));
-            this.toCurrencySelect.appendChild(new Option(displayText, currency));
+            this.fromCurrencySelect.appendChild(new Option(this.getCurrencyDisplayText(currency), currency));
         });
-
-        // Restore last selected currencies or set default
         this.fromCurrencySelect.value = localStorage.getItem('fromCurrency') || 'USD';
-        this.toCurrencySelect.value = localStorage.getItem('toCurrency') || 'MYR';
     }
 
     setupEventListeners() {
-        this.fromAmountInput.addEventListener('input', () => this.convert());
+        this.fromAmountInput.addEventListener('input', () => this.convertAll());
         this.fromCurrencySelect.addEventListener('change', () => {
-            this.convert();
+            this.convertAll();
             localStorage.setItem('fromCurrency', this.fromCurrencySelect.value);
         });
-        this.toCurrencySelect.addEventListener('change', () => {
-            this.convert();
-            localStorage.setItem('toCurrency', this.toCurrencySelect.value);
-        });
         this.swapButton.addEventListener('click', () => this.swapCurrencies());
-
-        this.toAmountInput.addEventListener('input', () => this.reverseConvert());
+        this.addTargetBtn.addEventListener('click', () => this.addTarget());
     }
 
-    convert() {
-        const amount = parseFloat(this.fromAmountInput.value) || 0;
-        const fromCurrency = this.fromCurrencySelect.value;
-        const toCurrency = this.toCurrencySelect.value;
-
-        if (amount === 0) {
-            this.toAmountInput.value = '';
-            this.hideResult();
-            return;
+    restoreTargets() {
+        const count = parseInt(localStorage.getItem('targetCount')) || 1;
+        for (let i = 0; i < count; i++) {
+            const savedCurrency = localStorage.getItem(`toCurrency_${i}`);
+            this.addTarget(savedCurrency || undefined);
         }
-
-        const result = this.calculateConversion(amount, fromCurrency, toCurrency);
-        this.toAmountInput.value = result.toFixed(2);
-        this.displayResult(amount, fromCurrency, toCurrency, result);
     }
 
-    reverseConvert() {
-        const amount = parseFloat(this.toAmountInput.value) || 0;
-        const fromCurrency = this.toCurrencySelect.value;
+    addTarget(currencyCode) {
+        const index = this.targets.length;
+        const currencies = this.getSortedCurrencies();
+
+        const row = document.createElement('div');
+        row.className = 'target-row';
+
+        const inputGroup = document.createElement('div');
+        inputGroup.className = 'currency-input-group';
+
+        const amountInput = document.createElement('input');
+        amountInput.type = 'number';
+        amountInput.className = 'currency-input to-amount';
+        amountInput.placeholder = '0';
+        amountInput.inputMode = 'decimal';
+
+        const currencySelect = document.createElement('select');
+        currencySelect.className = 'currency-select to-currency';
+        currencies.forEach(c => {
+            currencySelect.appendChild(new Option(this.getCurrencyDisplayText(c), c));
+        });
+
+        const defaultCurrency = currencyCode || (index === 0 ? 'MYR' : 'USD');
+        const validCurrency = currencies.includes(defaultCurrency) ? defaultCurrency : currencies[0];
+        currencySelect.value = validCurrency;
+
+        const rateDiv = document.createElement('div');
+        rateDiv.className = 'target-rate';
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-target-btn';
+        removeBtn.setAttribute('aria-label', 'Remove target currency');
+        removeBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+
+        inputGroup.appendChild(amountInput);
+        inputGroup.appendChild(currencySelect);
+        inputGroup.appendChild(removeBtn);
+        row.appendChild(inputGroup);
+        row.appendChild(rateDiv);
+        this.targetsContainer.appendChild(row);
+
+        const target = { amountInput, currencySelect, rateDiv, removeBtn, row };
+        this.targets.push(target);
+
+        amountInput.addEventListener('input', () => this.reverseConvert(this.targets.indexOf(target)));
+        amountInput.addEventListener('focus', () => { this.focusedTargetIndex = this.targets.indexOf(target); });
+        currencySelect.addEventListener('change', () => {
+            this.convertAll();
+            this.saveTargetState();
+        });
+        removeBtn.addEventListener('click', () => this.removeTarget(this.targets.indexOf(target)));
+
+        this.updateRemoveButtons();
+        this.convertAll();
+        this.saveTargetState();
+    }
+
+    removeTarget(index) {
+        if (this.targets.length <= 1) return;
+        const target = this.targets[index];
+        target.row.remove();
+        this.targets.splice(index, 1);
+        if (this.focusedTargetIndex >= this.targets.length) {
+            this.focusedTargetIndex = this.targets.length - 1;
+        }
+        this.updateRemoveButtons();
+        this.convertAll();
+        this.saveTargetState();
+    }
+
+    updateRemoveButtons() {
+        const show = this.targets.length > 1;
+        this.targets.forEach((t) => {
+            t.removeBtn.style.display = show ? '' : 'none';
+        });
+    }
+
+    swapCurrencies() {
+        const targetIndex = this.focusedTargetIndex;
+        const target = this.targets[targetIndex];
+        if (!target) return;
+
+        const temp = this.fromCurrencySelect.value;
+        this.fromCurrencySelect.value = target.currencySelect.value;
+        target.currencySelect.value = temp;
+
+        localStorage.setItem('fromCurrency', this.fromCurrencySelect.value);
+        this.saveTargetState();
+        this.convertAll();
+        this.focusAndSelect(this.fromAmountInput);
+    }
+
+    convertAll() {
+        const fromAmount = parseFloat(this.fromAmountInput.value) || 0;
+        const fromCurrency = this.fromCurrencySelect.value;
+
+        this.targets.forEach((target) => {
+            const toCurrency = target.currencySelect.value;
+            if (fromAmount === 0) {
+                target.amountInput.value = '';
+                target.rateDiv.textContent = '';
+                return;
+            }
+            const result = this.calculateConversion(fromAmount, fromCurrency, toCurrency);
+            target.amountInput.value = result.toFixed(2);
+            const rate = this.calculateConversion(1, fromCurrency, toCurrency);
+            target.rateDiv.textContent = `1 ${fromCurrency} = ${rate.toFixed(4)} ${toCurrency}`;
+        });
+    }
+
+    reverseConvert(index) {
+        const target = this.targets[index];
+        const amount = parseFloat(target.amountInput.value) || 0;
+        const fromCurrency = target.currencySelect.value;
         const toCurrency = this.fromCurrencySelect.value;
 
         if (amount === 0) {
             this.fromAmountInput.value = '';
-            this.hideResult();
+            this.convertAll();
             return;
         }
 
         const result = this.calculateConversion(amount, fromCurrency, toCurrency);
         this.fromAmountInput.value = result.toFixed(2);
-        this.displayResult(parseFloat(this.fromAmountInput.value), this.fromCurrencySelect.value, this.toCurrencySelect.value, parseFloat(this.toAmountInput.value));
+        this.convertAll();
     }
 
     calculateConversion(amount, fromCurrency, toCurrency) {
@@ -194,52 +273,30 @@ class CurrencyConverter {
 
         let amountInMYR;
         if (fromCurrency === 'MYR') {
-            // Already in MYR
             amountInMYR = amount;
         } else {
-            // Convert foreign currency → MYR using correct rate (1 foreign = X MYR)
             amountInMYR = amount * fromRate.middle_rate;
         }
 
         let result;
         if (toCurrency === 'MYR') {
-            // Result is in MYR
             result = amountInMYR;
         } else {
-            // Convert MYR → foreign currency: divide by target rate
             result = amountInMYR / toRate.middle_rate;
         }
 
         return result;
     }
 
-    displayResult(fromAmount, fromCurrency, toCurrency, toAmount) {
-        // const fromFlag = this.currencyFlags[fromCurrency] || '🏳️';
-        // const toFlag = this.currencyFlags[toCurrency] || '🏳️';
-
-        this.resultText.textContent = `${fromAmount} ${fromCurrency} = ${toAmount.toFixed(2)} ${toCurrency}`;
-
-        const rate = this.calculateConversion(1, fromCurrency, toCurrency);
-        this.rateInfo.textContent = `1 ${fromCurrency} = ${rate.toFixed(4)} ${toCurrency}`;
-
-        this.showResult();
-    }
-
-    swapCurrencies() {
-        const tempCurrency = this.fromCurrencySelect.value;
-
-        this.fromCurrencySelect.value = this.toCurrencySelect.value;
-        this.toCurrencySelect.value = tempCurrency;
-
-        this.convert();
-    }
-
-    showResult() {
-        this.resultSection.style.display = 'block';
-    }
-
-    hideResult() {
-        this.resultSection.style.display = 'none';
+    saveTargetState() {
+        this.targets.forEach((t, i) => {
+            localStorage.setItem(`toCurrency_${i}`, t.currencySelect.value);
+        });
+        localStorage.setItem('targetCount', this.targets.length);
+        for (let i = this.targets.length; ; i++) {
+            if (localStorage.getItem(`toCurrency_${i}`) === null) break;
+            localStorage.removeItem(`toCurrency_${i}`);
+        }
     }
 
     showError(message) {
@@ -259,35 +316,17 @@ class CurrencyConverter {
     updateLastUpdatedDisplay() {
         if (this.lastUpdated) {
             const date = new Date(this.lastUpdated);
-            // fallback to en-MY if navigator.language is exactly 'en'
             const locale = navigator.language === 'en' ? 'en-MY' : navigator.language;
             this.lastUpdatedDiv.textContent = `BNM Open API - Last updated: ${date.toLocaleString(locale)}`;
         }
     }
 
-}
-
-// Initialize the converter when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    new CurrencyConverter();
-});
-
-
-// Always focus + select fromAmount (on load and after swap)
-window.addEventListener("DOMContentLoaded", () => {
-    const from = document.getElementById("fromAmount");
-    const swap = document.getElementById("swapButton");
-
-    function focusAndSelect(el) {
+    focusAndSelect(el) {
         el.focus();
         setTimeout(() => el.select(), 0);
     }
+}
 
-    // on load → fromAmount
-    focusAndSelect(from);
-
-    // on swap click → still only fromAmount
-    swap.addEventListener("click", () => {
-        focusAndSelect(from);
-    });
+document.addEventListener('DOMContentLoaded', () => {
+    new CurrencyConverter();
 });
