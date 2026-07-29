@@ -41,7 +41,7 @@ class CurrencyConverter {
         this.fromCurrencySelect = document.getElementById('fromCurrency');
         this.swapButton = document.getElementById('swapButton');
         this.targetsContainer = document.getElementById('targetsContainer');
-        this.addTargetBtn = document.getElementById('addTargetBtn');
+        this.addTargetSelect = document.getElementById('addTargetSelect');
         this.errorMessage = document.getElementById('errorMessage');
         this.lastUpdatedDiv = document.getElementById('lastUpdated');
 
@@ -100,6 +100,25 @@ class CurrencyConverter {
         return Object.keys(this.exchangeRates).sort();
     }
 
+    populateAddTargetSelect() {
+        const selected = new Set(this.targets.map(t => t.currencySelect.value));
+        selected.add(this.fromCurrencySelect.value);
+
+        this.addTargetSelect.innerHTML = '';
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = '+ Add target currency';
+        this.addTargetSelect.appendChild(placeholder);
+
+        this.getSortedCurrencies().forEach(c => {
+            if (selected.has(c)) return;
+            const opt = document.createElement('option');
+            opt.value = c;
+            opt.textContent = this.getCurrencyDisplayText(c);
+            this.addTargetSelect.appendChild(opt);
+        });
+    }
+
     getCurrencyDisplayText(currencyCode) {
         const flag = this.currencyFlags[currencyCode] || '🏳️';
         return `${flag} ${currencyCode}`;
@@ -119,9 +138,17 @@ class CurrencyConverter {
         this.fromCurrencySelect.addEventListener('change', () => {
             this.convertAll();
             localStorage.setItem('fromCurrency', this.fromCurrencySelect.value);
+            this.populateAddTargetSelect();
         });
         this.swapButton.addEventListener('click', () => this.swapCurrencies());
-        this.addTargetBtn.addEventListener('click', () => { this.addTarget(); this.saveTargetState(); });
+        this.addTargetSelect.addEventListener('change', () => {
+            const value = this.addTargetSelect.value;
+            if (!value) return;
+            this.addTarget(value);
+            this.addTargetSelect.value = '';
+            this.saveTargetState();
+            this.populateAddTargetSelect();
+        });
     }
 
     restoreTargets() {
@@ -131,6 +158,7 @@ class CurrencyConverter {
             this.addTarget(savedCurrency || undefined);
         }
         this.saveTargetState();
+        this.populateAddTargetSelect();
     }
 
     addTarget(currencyCode) {
@@ -182,11 +210,13 @@ class CurrencyConverter {
         currencySelect.addEventListener('change', () => {
             this.convertAll();
             this.saveTargetState();
+            this.populateAddTargetSelect();
         });
         removeBtn.addEventListener('click', () => this.removeTarget(this.targets.indexOf(target)));
 
         this.updateRemoveButtons();
         this.convertAll();
+        this.populateAddTargetSelect();
     }
 
     removeTarget(index) {
@@ -200,6 +230,7 @@ class CurrencyConverter {
         this.updateRemoveButtons();
         this.convertAll();
         this.saveTargetState();
+        this.populateAddTargetSelect();
     }
 
     updateRemoveButtons() {
@@ -221,6 +252,7 @@ class CurrencyConverter {
         localStorage.setItem('fromCurrency', this.fromCurrencySelect.value);
         this.saveTargetState();
         this.convertAll();
+        this.populateAddTargetSelect();
         this.focusAndSelect(this.fromAmountInput);
     }
 

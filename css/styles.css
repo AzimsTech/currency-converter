@@ -156,7 +156,7 @@ body {
     color: #d93025;
 }
 
-.add-target-btn {
+.add-target-select {
     width: 100%;
     padding: 14px;
     border: 2px dashed #dadce0;
@@ -168,9 +168,14 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     margin-top: 4px;
+    text-align: center;
+    text-align-last: center;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
 }
 
-.add-target-btn:hover {
+.add-target-select:hover {
     border-color: #1a73e8;
     background: #f0f6ff;
 }
@@ -277,12 +282,12 @@ body {
         color: #ff6b6b;
     }
 
-    .add-target-btn {
+    .add-target-select {
         border-color: #444;
         color: #4285f4;
     }
 
-    .add-target-btn:hover {
+    .add-target-select:hover {
         border-color: #4285f4;
         background: #1a3a5c;
     }
@@ -375,7 +380,7 @@ body {
         padding: 12px 10px;
     }
 
-    .add-target-btn {
+    .add-target-select {
         padding: 12px;
         font-size: 13px;
     }
