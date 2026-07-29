@@ -100,9 +100,17 @@ class CurrencyConverter {
         return Object.keys(this.exchangeRates).sort();
     }
 
-    populateAddTargetSelect() {
-        const selected = new Set(this.targets.map(t => t.currencySelect.value));
+    getSelectedCurrencies(skipTarget) {
+        const selected = new Set();
         selected.add(this.fromCurrencySelect.value);
+        this.targets.forEach((t, i) => {
+            if (i !== skipTarget) selected.add(t.currencySelect.value);
+        });
+        return selected;
+    }
+
+    populateAddTargetSelect() {
+        const selected = this.getSelectedCurrencies();
 
         this.addTargetSelect.innerHTML = '';
         const placeholder = document.createElement('option');
@@ -116,6 +124,22 @@ class CurrencyConverter {
             opt.value = c;
             opt.textContent = this.getCurrencyDisplayText(c);
             this.addTargetSelect.appendChild(opt);
+        });
+    }
+
+    populateTargetCurrencyDropdowns() {
+        this.targets.forEach((t, i) => {
+            const current = t.currencySelect.value;
+            const selected = this.getSelectedCurrencies(i);
+            t.currencySelect.innerHTML = '';
+            this.getSortedCurrencies().forEach(c => {
+                if (selected.has(c) && c !== current) return;
+                const opt = document.createElement('option');
+                opt.value = c;
+                opt.textContent = this.getCurrencyDisplayText(c);
+                t.currencySelect.appendChild(opt);
+            });
+            t.currencySelect.value = current;
         });
     }
 
@@ -138,6 +162,7 @@ class CurrencyConverter {
         this.fromCurrencySelect.addEventListener('change', () => {
             this.convertAll();
             localStorage.setItem('fromCurrency', this.fromCurrencySelect.value);
+            this.populateTargetCurrencyDropdowns();
             this.populateAddTargetSelect();
         });
         this.swapButton.addEventListener('click', () => this.swapCurrencies());
@@ -147,7 +172,6 @@ class CurrencyConverter {
             this.addTarget(value);
             this.addTargetSelect.value = '';
             this.saveTargetState();
-            this.populateAddTargetSelect();
         });
     }
 
@@ -158,6 +182,7 @@ class CurrencyConverter {
             this.addTarget(savedCurrency || undefined);
         }
         this.saveTargetState();
+        this.populateTargetCurrencyDropdowns();
         this.populateAddTargetSelect();
     }
 
@@ -210,12 +235,14 @@ class CurrencyConverter {
         currencySelect.addEventListener('change', () => {
             this.convertAll();
             this.saveTargetState();
+            this.populateTargetCurrencyDropdowns();
             this.populateAddTargetSelect();
         });
         removeBtn.addEventListener('click', () => this.removeTarget(this.targets.indexOf(target)));
 
         this.updateRemoveButtons();
         this.convertAll();
+        this.populateTargetCurrencyDropdowns();
         this.populateAddTargetSelect();
     }
 
@@ -230,6 +257,7 @@ class CurrencyConverter {
         this.updateRemoveButtons();
         this.convertAll();
         this.saveTargetState();
+        this.populateTargetCurrencyDropdowns();
         this.populateAddTargetSelect();
     }
 
@@ -252,6 +280,7 @@ class CurrencyConverter {
         localStorage.setItem('fromCurrency', this.fromCurrencySelect.value);
         this.saveTargetState();
         this.convertAll();
+        this.populateTargetCurrencyDropdowns();
         this.populateAddTargetSelect();
         this.focusAndSelect(this.fromAmountInput);
     }
