@@ -274,13 +274,16 @@ class CurrencyConverter {
         if (!target) return;
 
         const temp = this.fromCurrencySelect.value;
+
         this.fromCurrencySelect.value = target.currencySelect.value;
+        this.populateTargetCurrencyDropdowns();
+
         target.currencySelect.value = temp;
+        this.populateTargetCurrencyDropdowns();
 
         localStorage.setItem('fromCurrency', this.fromCurrencySelect.value);
         this.saveTargetState();
         this.convertAll();
-        this.populateTargetCurrencyDropdowns();
         this.populateAddTargetSelect();
         this.focusAndSelect(this.fromAmountInput);
     }
