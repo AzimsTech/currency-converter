@@ -274,6 +274,9 @@ class CurrencyConverter {
         const target = this.targets[targetIndex];
         if (!target) return;
 
+        this.swapButton.classList.add('spinning');
+        setTimeout(() => this.swapButton.classList.remove('spinning'), 400);
+
         const temp = this.fromCurrencySelect.value;
 
         this.fromCurrencySelect.value = target.currencySelect.value;
@@ -281,6 +284,14 @@ class CurrencyConverter {
 
         target.currencySelect.value = temp;
         this.populateTargetCurrencyDropdowns();
+
+        const sourceGroup = this.fromCurrencySelect.closest('.currency-input-group');
+        sourceGroup.classList.add('highlighted');
+        setTimeout(() => sourceGroup.classList.remove('highlighted'), 500);
+
+        const targetGroup = target.currencySelect.closest('.currency-input-group');
+        targetGroup.classList.add('highlighted');
+        setTimeout(() => targetGroup.classList.remove('highlighted'), 500);
 
         localStorage.setItem('fromCurrency', this.fromCurrencySelect.value);
         this.saveTargetState();
