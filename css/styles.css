@@ -199,6 +199,17 @@ body {
     color: #5f6368;
 }
 
+.last-updated .bnm-icon {
+    display: inline-block;
+    width: 14px;
+    height: 17px;
+    vertical-align: middle;
+    margin-right: 4px;
+    background-color: currentColor;
+    mask: url(../assets/icons/bnm-icon.svg) no-repeat center / contain;
+    -webkit-mask: url(../assets/icons/bnm-icon.svg) no-repeat center / contain;
+}
+
 @media (prefers-color-scheme: dark) {
     body {
         background-color: #121212;

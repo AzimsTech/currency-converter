@@ -44,6 +44,7 @@ class CurrencyConverter {
         this.addTargetSelect = document.getElementById('addTargetSelect');
         this.errorMessage = document.getElementById('errorMessage');
         this.lastUpdatedDiv = document.getElementById('lastUpdated');
+        this.lastUpdatedText = document.getElementById('lastUpdatedText');
 
         this.init();
     }
@@ -381,7 +382,7 @@ class CurrencyConverter {
         if (this.lastUpdated) {
             const date = new Date(this.lastUpdated);
             const locale = navigator.language === 'en' ? 'en-MY' : navigator.language;
-            this.lastUpdatedDiv.textContent = `BNM Open API - Last updated: ${date.toLocaleString(locale)}`;
+            this.lastUpdatedText.textContent = `BNM Open API - Last updated: ${date.toLocaleString(locale)}`;
         }
     }
 
