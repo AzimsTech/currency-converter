@@ -300,11 +300,12 @@ class CurrencyConverter {
         this.focusAndSelect(this.fromAmountInput);
     }
 
-    convertAll() {
+    convertAll(skipIndex = -1) {
         const fromAmount = parseFloat(this.fromAmountInput.value) || 0;
         const fromCurrency = this.fromCurrencySelect.value;
 
-        this.targets.forEach((target) => {
+        this.targets.forEach((target, i) => {
+            if (i === skipIndex) return;
             const toCurrency = target.currencySelect.value;
             if (fromAmount === 0) {
                 target.amountInput.value = '';
@@ -326,13 +327,13 @@ class CurrencyConverter {
 
         if (amount === 0) {
             this.fromAmountInput.value = '';
-            this.convertAll();
+            this.convertAll(index);
             return;
         }
 
         const result = this.calculateConversion(amount, fromCurrency, toCurrency);
         this.fromAmountInput.value = result.toFixed(2);
-        this.convertAll();
+        this.convertAll(index);
     }
 
     calculateConversion(amount, fromCurrency, toCurrency) {
