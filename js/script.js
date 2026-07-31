@@ -212,7 +212,7 @@ class CurrencyConverter {
         currencySelect.value = validCurrency;
 
         const rateDiv = document.createElement('div');
-        rateDiv.className = 'target-rate';
+        rateDiv.className = 'rate';
 
         const removeBtn = document.createElement('button');
         removeBtn.className = 'remove-target-btn';
