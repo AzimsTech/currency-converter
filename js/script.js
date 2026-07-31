@@ -4,7 +4,6 @@ class CurrencyConverter {
         this.lastUpdated = '';
         this.isLoading = false;
         this.targets = [];
-        this.focusedTargetIndex = 0;
 
         this.currencyFlags = {
             'MYR': '🇲🇾',
@@ -39,7 +38,7 @@ class CurrencyConverter {
 
         this.fromAmountInput = document.getElementById('fromAmount');
         this.fromCurrencySelect = document.getElementById('fromCurrency');
-        this.swapButton = document.getElementById('swapButton');
+        this.sourceRateDiv = document.getElementById('sourceRate');
         this.targetsContainer = document.getElementById('targetsContainer');
         this.addTargetSelect = document.getElementById('addTargetSelect');
         this.errorMessage = document.getElementById('errorMessage');
@@ -166,7 +165,6 @@ class CurrencyConverter {
             this.populateTargetCurrencyDropdowns();
             this.populateAddTargetSelect();
         });
-        this.swapButton.addEventListener('click', () => this.swapCurrencies());
         this.addTargetSelect.addEventListener('change', () => {
             const value = this.addTargetSelect.value;
             if (!value) return;
@@ -232,7 +230,6 @@ class CurrencyConverter {
         this.targets.push(target);
 
         amountInput.addEventListener('input', () => this.reverseConvert(this.targets.indexOf(target)));
-        amountInput.addEventListener('focus', () => { this.focusedTargetIndex = this.targets.indexOf(target); });
         currencySelect.addEventListener('change', () => {
             this.convertAll();
             this.saveTargetState();
@@ -252,9 +249,6 @@ class CurrencyConverter {
         const target = this.targets[index];
         target.row.remove();
         this.targets.splice(index, 1);
-        if (this.focusedTargetIndex >= this.targets.length) {
-            this.focusedTargetIndex = this.targets.length - 1;
-        }
         this.updateRemoveButtons();
         this.convertAll();
         this.saveTargetState();
@@ -269,40 +263,19 @@ class CurrencyConverter {
         });
     }
 
-    swapCurrencies() {
-        const targetIndex = this.focusedTargetIndex;
-        const target = this.targets[targetIndex];
-        if (!target) return;
-
-        this.swapButton.classList.add('spinning');
-        setTimeout(() => this.swapButton.classList.remove('spinning'), 400);
-
-        const temp = this.fromCurrencySelect.value;
-
-        this.fromCurrencySelect.value = target.currencySelect.value;
-        this.populateTargetCurrencyDropdowns();
-
-        target.currencySelect.value = temp;
-        this.populateTargetCurrencyDropdowns();
-
-        const sourceGroup = this.fromCurrencySelect.closest('.currency-input-group');
-        sourceGroup.classList.add('highlighted');
-        setTimeout(() => sourceGroup.classList.remove('highlighted'), 500);
-
-        const targetGroup = target.currencySelect.closest('.currency-input-group');
-        targetGroup.classList.add('highlighted');
-        setTimeout(() => targetGroup.classList.remove('highlighted'), 500);
-
-        localStorage.setItem('fromCurrency', this.fromCurrencySelect.value);
-        this.saveTargetState();
-        this.convertAll();
-        this.populateAddTargetSelect();
-        this.focusAndSelect(this.fromAmountInput);
-    }
-
     convertAll(skipIndex = -1) {
         const fromAmount = parseFloat(this.fromAmountInput.value) || 0;
         const fromCurrency = this.fromCurrencySelect.value;
+
+        if (this.targets.length > 0) {
+            const firstTarget = this.targets[0];
+            if (fromAmount === 0) {
+                this.sourceRateDiv.textContent = '';
+            } else {
+                const rate = this.calculateConversion(1, fromCurrency, firstTarget.currencySelect.value);
+                this.sourceRateDiv.textContent = `1 ${fromCurrency} = ${rate.toFixed(4)} ${firstTarget.currencySelect.value}`;
+            }
+        }
 
         this.targets.forEach((target, i) => {
             if (i === skipIndex) return;

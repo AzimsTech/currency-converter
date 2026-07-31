@@ -56,7 +56,14 @@ body {
 }
 
 .source-row {
-    margin-bottom: 16px;
+    margin-bottom: 4px;
+}
+
+.source-rate {
+    font-size: 12px;
+    color: #5f6368;
+    padding: 4px 16px 0;
+    min-height: 18px;
 }
 
 .currency-input-group {
@@ -99,53 +106,6 @@ body {
 
 .currency-select:hover {
     background: #e8f0fe;
-}
-
-.swap-wrapper {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 16px;
-}
-
-.swap-button {
-    font-size: 1.5rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 12px;
-    border-radius: 50%;
-    transition: all 0.2s ease;
-    color: #5f6368;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 48px;
-    min-height: 48px;
-}
-
-.swap-button:hover {
-    background: #f1f3f4;
-    transform: rotate(180deg);
-}
-
-@keyframes swapSpin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.swap-button.spinning {
-    animation: swapSpin 0.4s ease-in-out;
-}
-
-@keyframes swapHighlight {
-    0% { box-shadow: 0 0 0 0 rgba(26, 115, 232, 0.5); }
-    50% { box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.3); }
-    100% { box-shadow: 0 0 0 0 rgba(26, 115, 232, 0); }
-}
-
-.currency-input-group.highlighted {
-    animation: swapHighlight 0.5s ease-out;
-    border-color: #1a73e8;
 }
 
 .target-row {
@@ -291,21 +251,8 @@ body {
         background-color: #444;
     }
 
-    .swap-button {
-        color: #aaaaaa;
-        background: #333;
-    }
-
-    .swap-button:hover {
-        background: #555;
-        color: #ffffff;
-    }
-
-    .currency-input-group.highlighted {
-        border-color: #8ab4f8;
-    }
-
-    .target-rate {
+    .target-rate,
+    .source-rate {
         color: #aaaaaa;
     }
 
@@ -404,12 +351,6 @@ body {
         padding: 12px 8px;
         font-size: 12px;
         min-width: 86px;
-    }
-
-    .swap-button {
-        min-width: 40px;
-        min-height: 40px;
-        padding: 8px;
     }
 
     .remove-target-btn {
