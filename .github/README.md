@@ -54,6 +54,14 @@ export default {
 
 Update the worker URL in `fetchExchangeRates()` within `script.js`.
 
+## Performance
+
+The page is kept to a single network hop so it isn't blocked by chained requests:
+
+- The stylesheet is inlined in `index.html` (it is the source of truth; there is no `css/styles.css`).
+- Flag emojis use a self-hosted copy of the Twemoji Country Flags font (`assets/fonts/`), preloaded from the HTML instead of being injected by a CDN script.
+- `manifest.json` is attached from `script.js` after load, because a `<link rel="manifest">` is fetched at medium priority and shows up as a render-blocking request chain.
+
 ## BNM Open API
 
 The app uses the conversion rate provided by Bank Negara Malaysia (BNM). The relevant documentation can be found [here][bnm-docs].

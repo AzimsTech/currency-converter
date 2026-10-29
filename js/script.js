@@ -380,3 +380,10 @@ class CurrencyConverter {
 document.addEventListener('DOMContentLoaded', () => {
     new CurrencyConverter();
 });
+
+// The manifest is only needed for installation, not for rendering. Adding it here
+// keeps it out of the render-blocking request chain.
+document.head.appendChild(Object.assign(document.createElement('link'), {
+    rel: 'manifest',
+    href: 'manifest.json'
+}));
